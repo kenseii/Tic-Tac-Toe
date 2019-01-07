@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
     //this array holds the game status by knowing which spots are playable,
     // 2 represents an empty spot
@@ -26,6 +28,45 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    // check whether there are empty spots
+    public static boolean contains(int[] arr, int item) {
+
+        for (int n : arr) {
+            if (item == n) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // method to reset the game
+
+    public void playAgain(View view) {
+        //Hide the button again
+        Button new_game = findViewById(R.id.new_game);
+        new_game.setVisibility(View.INVISIBLE);
+
+        //Loop through the elements of the grid layout
+        android.support.v7.widget.GridLayout grid = findViewById(R.id.gridLayout);
+        for (int i = 0; i < grid.getChildCount(); i++) {
+            // get the contents of the gridlayout
+            ImageView counters = (ImageView) grid.getChildAt(i);
+            // set the content of those placeholders to null
+            counters.setImageDrawable(null);
+        }
+
+        //Resetting the variables to original value
+        for (int i = 0; i < gameState.length; i++) {
+            gameState[i] = 2;
+        }
+
+        //to set the active player 0 for yellow, 1 for red
+        activePlayer = 0;
+
+        // variable to indicate whether or not the match is ongoing
+        gameActive = true;
     }
 
     public void dropIn(View view) {
@@ -72,38 +113,26 @@ public class MainActivity extends AppCompatActivity {
                     gameActive = false;
                     Button new_game = findViewById(R.id.new_game);
                     new_game.setVisibility(View.VISIBLE);
+
                 }
+
+
             }
-            //Toast.makeText(this,"Its a draw", Toast.LENGTH_SHORT).show();
+            //  Check if all the positions are filled without a winner if so return its a draw
+
+            Log.i("Content", Arrays.toString(gameState));
+            boolean container = contains(gameState, 2);
+            Log.i("true 7 times at least", Boolean.toString(container));
+            if (!container) {
+                Toast.makeText(this, "Its a draw", Toast.LENGTH_SHORT).show();
+                gameActive = false;
+                Button new_game = findViewById(R.id.new_game);
+                new_game.setVisibility(View.VISIBLE);
+
+            }
+
+
 
         }
-    }
-
-    // method to reset the game
-
-    public void playAgain(View view) {
-        //Hide the button again
-        Button new_game = findViewById(R.id.new_game);
-        new_game.setVisibility(View.INVISIBLE);
-
-        //Loop through the elements of the grid layout
-        android.support.v7.widget.GridLayout grid = findViewById(R.id.gridLayout);
-        for (int i = 0; i < grid.getChildCount(); i++) {
-            // get the contents of the gridlayout
-            ImageView counters = (ImageView) grid.getChildAt(i);
-            // set the content of those placeholders to null
-            counters.setImageDrawable(null);
-        }
-
-        //Resetting the variables to original value
-        for (int i = 0; i < gameState.length; i++) {
-            gameState[i] = 2;
-        }
-
-        //to set the active player 0 for yellow, 1 for red
-        activePlayer = 0;
-
-        // variable to indicate whether or not the match is ongoing
-        gameActive = true;
     }
 }
